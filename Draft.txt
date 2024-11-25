@@ -1,0 +1,117 @@
+
+*** RegistroStep.java
+
+package bugBank.steps;
+
+import bugBank.TestBase;
+import bugBank.tasks.RegistroTasks;
+import io.cucumber.java.pt.Dado;
+import io.cucumber.java.pt.Entao;
+import io.cucumber.java.pt.Quando;
+
+public class RegistroStep extends TestBase {
+
+    RegistroTasks registroTasks = new RegistroTasks(getDriver());
+
+    public RegistroStep() {
+    }
+
+    @Dado("que acesso site do BugBank")
+    public void queAcessoSiteDoBugbank() {
+
+    }
+    @Quando("clico em registrar")
+    public void clicoEmRegistrar() {
+        registroTasks.registrar();
+    }
+    @Quando("preencho os campos")
+    public void preenchoOsCampos() {
+        registroTasks.preencherDados("1@1.com","Motta","123");
+        registroTasks.cliqueToggle();
+    }
+    @Entao("clico em cadastrar")
+    public void clicoEmCadastrar() {
+        registroTasks.btnCadastrar();
+        registroTasks.capturarTexto();
+    }
+    @Entao("registro criado com sucesso")
+    public void registroCriadoComSucesso() {
+        registroTasks.verifcarBtnAcessar();
+    }
+
+}
+
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+*** Registrar.feature
+
+#language: pt
+
+@Global
+Funcionalidade: Criar registro
+
+  Contexto:
+    Dado que acesso site do BugBank
+
+  @CenarioCompra
+  Cenario: Realizar cadastro de cliente novo
+    Quando clico em registrar
+    E preencho os campos
+    Entao clico em cadastrar
+    E registro criado com sucesso
+
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+*** Runner.java
+
+package bugBank;
+
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import org.junit.runner.RunWith;
+
+@RunWith(Cucumber.class)
+@CucumberOptions(
+        features = "src/test/resources/features",
+        glue = "bugBank.steps",
+        tags = "@Global",
+        snippets = CucumberOptions.SnippetType.CAMELCASE,
+//        dryRun = false,
+        plugin = {
+                "pretty",
+                "html:reports/cucumber.html",
+                "json:reports/cucumber.json",
+                "junit:reports/cucumber.xml",
+        }
+)
+public class Runner {
+}
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+*** hook
+
+package bugBank.steps.hooks;
+
+import io.cucumber.java.Before;
+import org.openqa.selenium.WebDriver;
+import static bugBank.TestBase.getDriver;
+
+public class hook {
+
+    private WebDriver driver;
+
+    @Before
+    public void setUp() throws InterruptedException {
+        driver = getDriver();
+        driver.get("https://bugbank.netlify.app/");
+    }
+
+//    @After
+//    public void finish(){
+//        quitDriver();
+//    }
+
+}
